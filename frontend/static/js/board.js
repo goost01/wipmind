@@ -1,5 +1,6 @@
 /**
  * Tablero Scrumban — drag & drop con validación WIP.
+ * Soporta mouse (HTML5 DnD) y táctil (iOS/Android).
  */
 
 const Board = (() => {
@@ -13,11 +14,18 @@ const Board = (() => {
   let wipLimit = 3;
   let wipActual = 0;
 
+  // ── Touch drag state ─────────────────────────────
+  let touchGhost   = null;
+  let touchCard    = null;
+  let touchOffsetX = 0;
+  let touchOffsetY = 0;
+
   function init(limit) {
     wipLimit = limit;
     setupDropZones();
   }
 
+  // ── Mouse drag & drop ────────────────────────────
   function setupDropZones() {
     document.querySelectorAll('.column-cards').forEach(zone => {
       zone.addEventListener('dragover', e => {
@@ -33,6 +41,64 @@ const Board = (() => {
     });
   }
 
+  // ── Touch drag & drop (iOS / Android) ────────────
+  function onTouchStart(e) {
+    const card  = e.currentTarget;
+    const touch = e.touches[0];
+    const rect  = card.getBoundingClientRect();
+
+    touchCard    = card;
+    touchOffsetX = touch.clientX - rect.left;
+    touchOffsetY = touch.clientY - rect.top;
+
+    touchGhost = card.cloneNode(true);
+    Object.assign(touchGhost.style, {
+      position:      'fixed',
+      width:         rect.width + 'px',
+      opacity:       '0.85',
+      pointerEvents: 'none',
+      zIndex:        '9999',
+      left:          (touch.clientX - touchOffsetX) + 'px',
+      top:           (touch.clientY - touchOffsetY) + 'px',
+      boxShadow:     '0 8px 24px rgba(0,0,0,0.18)',
+      borderRadius:  '10px',
+      transform:     'rotate(1.5deg)',
+    });
+    document.body.appendChild(touchGhost);
+    card.style.opacity = '0.3';
+  }
+
+  function onTouchMove(e) {
+    e.preventDefault();
+    if (!touchGhost) return;
+
+    const touch = e.touches[0];
+    touchGhost.style.left = (touch.clientX - touchOffsetX) + 'px';
+    touchGhost.style.top  = (touch.clientY - touchOffsetY) + 'px';
+
+    document.querySelectorAll('.column-cards').forEach(z => z.classList.remove('drag-over'));
+    const el   = document.elementFromPoint(touch.clientX, touch.clientY);
+    const zone = el?.closest('.column-cards');
+    if (zone) zone.classList.add('drag-over');
+  }
+
+  function onTouchEnd(e) {
+    if (!touchCard || !touchGhost) return;
+
+    const touch = e.changedTouches[0];
+    const el    = document.elementFromPoint(touch.clientX, touch.clientY);
+    const zone  = el?.closest('.column-cards');
+
+    touchGhost.remove();
+    touchGhost = null;
+    touchCard.style.opacity = '';
+    document.querySelectorAll('.column-cards').forEach(z => z.classList.remove('drag-over'));
+
+    if (zone) handleDrop(zone, touchCard);
+    touchCard = null;
+  }
+
+  // ── Card factory ─────────────────────────────────
   function createCard(task) {
     const card = document.createElement('div');
     card.className = 'task-card';
@@ -40,8 +106,8 @@ const Board = (() => {
     card.dataset.taskId = task.id;
     card.dataset.estado = task.estado;
 
-    const dueDate = new Date(task.fecha_entrega + 'T00:00:00');
-    const today = new Date();
+    const dueDate  = new Date(task.fecha_entrega + 'T00:00:00');
+    const today    = new Date();
     const diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
     const urgentClass = diffDays <= 2 ? 'urgent' : '';
 
@@ -61,6 +127,7 @@ const Board = (() => {
       </div>
     `;
 
+    // Mouse drag
     card.addEventListener('dragstart', () => {
       draggedCard = card;
       card.classList.add('dragging');
@@ -70,16 +137,22 @@ const Board = (() => {
       card.classList.remove('dragging');
     });
 
+    // Touch drag (iOS / Android)
+    card.addEventListener('touchstart',  onTouchStart, { passive: false });
+    card.addEventListener('touchmove',   onTouchMove,  { passive: false });
+    card.addEventListener('touchend',    onTouchEnd);
+
     return card;
   }
 
+  // ── Drop handler (shared by mouse & touch) ───────
   async function handleDrop(targetZone, card) {
-    const columnId = targetZone.closest('.board-column').id;
-    const newEstado = COLUMN_STATES[columnId];
-    const taskId = parseInt(card.dataset.taskId);
+    const columnId   = targetZone.closest('.board-column').id;
+    const newEstado  = COLUMN_STATES[columnId];
+    const taskId     = parseInt(card.dataset.taskId);
     const currentEstado = card.dataset.estado;
 
-    if (newEstado === currentEstado) return;
+    if (!newEstado || newEstado === currentEstado) return;
 
     try {
       const res = await WipMindAPI.Tasks.changeStatus(taskId, newEstado);
