@@ -194,6 +194,8 @@ body {
   border-radius: var(--radius-lg);
   padding: 16px;
   min-height: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
 .column-header {
@@ -232,6 +234,7 @@ body {
   flex-direction: column;
   gap: 10px;
   min-height: 60px;
+  flex: 1;
 }
 
 .column-cards.drag-over {
