@@ -1,6 +1,7 @@
 [
 {
   "model": "auth.user",
+  "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$1200000$vOsZFWUPkGpdM0CIl7YwCy$t1bKTQo/LYCWGQM/FvB7OWZQnfZGBs5TYDHV0em4qd0=",
     "last_login": null,
@@ -18,13 +19,14 @@
 },
 {
   "model": "auth.user",
+  "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$1200000$q3O8lgSZUJvlat7X4HpwC8$LwZTIRU0yZkyYfsemaIy/xWN7gT9C1PJ3qRpcgrEIO8=",
     "last_login": "2026-06-21T21:07:38.298Z",
     "is_superuser": false,
     "username": "estudiante",
     "first_name": "Ana",
-    "last_name": "López",
+    "last_name": "Lopez",
     "email": "est@utem.cl",
     "is_staff": false,
     "is_active": true,
@@ -37,9 +39,7 @@
   "model": "users.userprofile",
   "pk": 1,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": ["admin"],
     "carrera": "",
     "wip_limit": 3,
     "pomodoro_work_minutes": 25,
@@ -54,10 +54,8 @@
   "model": "users.userprofile",
   "pk": 2,
   "fields": {
-    "user": [
-      "estudiante"
-    ],
-    "carrera": "Ingeniería en Informática",
+    "user": ["estudiante"],
+    "carrera": "Ingenieria en Informatica",
     "wip_limit": 3,
     "pomodoro_work_minutes": 25,
     "pomodoro_break_minutes": 5,
@@ -71,13 +69,11 @@
   "model": "tasks.task",
   "pk": 1,
   "fields": {
-    "user": [
-      "estudiante"
-    ],
-    "titulo": "Informe de Cálculo I",
+    "user": ["estudiante"],
+    "titulo": "Informe de Calculo I",
     "descripcion": "",
-    "asignatura": "Cálculo I",
-    "fecha_entrega": "2026-06-19",
+    "asignatura": "Calculo I",
+    "fecha_entrega": "2026-07-19",
     "prioridad": "ALTA",
     "dificultad_estimada": 4,
     "estado": "IN_PROGRESS",
@@ -90,13 +86,11 @@
   "model": "tasks.task",
   "pk": 2,
   "fields": {
-    "user": [
-      "estudiante"
-    ],
-    "titulo": "Tarea de Programación",
+    "user": ["estudiante"],
+    "titulo": "Tarea de Programacion",
     "descripcion": "",
-    "asignatura": "Programación Avanzada",
-    "fecha_entrega": "2026-06-22",
+    "asignatura": "Programacion Avanzada",
+    "fecha_entrega": "2026-07-22",
     "prioridad": "MEDIA",
     "dificultad_estimada": 3,
     "estado": "TODO",
@@ -109,13 +103,11 @@
   "model": "tasks.task",
   "pk": 3,
   "fields": {
-    "user": [
-      "estudiante"
-    ],
+    "user": ["estudiante"],
     "titulo": "Lectura cap. 3 Redes",
     "descripcion": "",
     "asignatura": "Redes de Computadores",
-    "fecha_entrega": "2026-06-27",
+    "fecha_entrega": "2026-07-27",
     "prioridad": "BAJA",
     "dificultad_estimada": 2,
     "estado": "TODO",
@@ -128,13 +120,11 @@
   "model": "tasks.task",
   "pk": 4,
   "fields": {
-    "user": [
-      "estudiante"
-    ],
-    "titulo": "Lab. de Física",
+    "user": ["estudiante"],
+    "titulo": "Lab. de Fisica",
     "descripcion": "",
-    "asignatura": "Física II",
-    "fecha_entrega": "2026-06-18",
+    "asignatura": "Fisica II",
+    "fecha_entrega": "2026-07-18",
     "prioridad": "ALTA",
     "dificultad_estimada": 5,
     "estado": "IN_PROGRESS",
