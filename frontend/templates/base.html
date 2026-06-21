@@ -12,8 +12,36 @@
 </head>
 <body>
 {% block body %}{% endblock %}
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
 <script src="{% static 'js/toast.js' %}"></script>
 <script src="{% static 'js/api.js' %}"></script>
 {% block scripts %}{% endblock %}
+
+<script>
+(function () {
+  const sidebar  = document.querySelector('.sidebar');
+  const overlay  = document.getElementById('sidebar-overlay');
+  const topbar   = document.querySelector('.topbar');
+  if (!sidebar || !topbar) return;
+
+  const btn = document.createElement('button');
+  btn.className = 'btn-hamburger';
+  btn.setAttribute('aria-label', 'Abrir menú');
+  btn.textContent = '☰';
+  topbar.insertBefore(btn, topbar.firstChild);
+
+  function open()  { sidebar.classList.add('open');  overlay.classList.add('active'); }
+  function close() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
+
+  btn.addEventListener('click', open);
+  overlay.addEventListener('click', close);
+
+  sidebar.querySelectorAll('.nav-link').forEach(link =>
+    link.addEventListener('click', close)
+  );
+})();
+</script>
 </body>
 </html>
