@@ -29,11 +29,15 @@ const TaskManager = (() => {
     resetForm();
   }
 
-  function resetForm() {
-    document.getElementById('task-form').reset();
+  function clearErrors() {
     document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
     document.querySelectorAll('.form-input, .form-select, .form-textarea')
       .forEach(el => el.classList.remove('error'));
+  }
+
+  function resetForm() {
+    document.getElementById('task-form').reset();
+    clearErrors();
   }
 
   function fillForm(task) {
@@ -77,7 +81,7 @@ const TaskManager = (() => {
   // ── CRUD ─────────────────────────────────────────
   async function submitForm(e) {
     e.preventDefault();
-    resetForm();
+    clearErrors();
     const data = getFormData();
 
     try {
