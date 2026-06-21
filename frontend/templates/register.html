@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Registrarse — WipMind{% endblock %}
+
+{% block body %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">🧠 WipMind</div>
+    <p class="auth-subtitle">Crea tu cuenta y empieza a estudiar mejor.</p>
+
+    <form class="auth-form" id="register-form" novalidate>
+      {% csrf_token %}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label" for="first_name">Nombre</label>
+          <input class="form-input" type="text" id="first_name" placeholder="Ana" required>
+          <span class="form-error" id="err-first_name"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="last_name">Apellido</label>
+          <input class="form-input" type="text" id="last_name" placeholder="López">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="username">Nombre de usuario</label>
+        <input class="form-input" type="text" id="username" placeholder="ana_lopez" autocomplete="username" required>
+        <span class="form-error" id="err-username"></span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="email">Correo electrónico</label>
+        <input class="form-input" type="email" id="email" placeholder="ana@utem.cl" required>
+        <span class="form-error" id="err-email"></span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="carrera">Carrera</label>
+        <input class="form-input" type="text" id="carrera" placeholder="Ingeniería en Informática">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Contraseña</label>
+        <input class="form-input" type="password" id="password" placeholder="Mín. 8 caracteres con un número" required>
+        <span class="form-error" id="err-password"></span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password_confirm">Confirmar contraseña</label>
+        <input class="form-input" type="password" id="password_confirm" placeholder="Repite la contraseña" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-full" id="btn-register">
+        Crear cuenta
+      </button>
+    </form>
+
+    <p class="auth-link">
+      ¿Ya tienes cuenta? <a href="/login/">Iniciar sesión</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('btn-register');
+  document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+  document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+
+  btn.disabled = true;
+  btn.textContent = 'Creando cuenta…';
+
+  try {
+    await WipMindAPI.Auth.register({
+      first_name:       document.getElementById('first_name').value.trim(),
+      last_name:        document.getElementById('last_name').value.trim(),
+      username:         document.getElementById('username').value.trim(),
+      email:            document.getElementById('email').value.trim(),
+      carrera:          document.getElementById('carrera').value.trim(),
+      password:         document.getElementById('password').value,
+      password_confirm: document.getElementById('password_confirm').value,
+    });
+    window.location.href = '/dashboard/';
+  } catch (err) {
+    if (err.data && typeof err.data === 'object') {
+      Object.entries(err.data).forEach(([field, msgs]) => {
+        const errEl = document.getElementById(`err-${field}`);
+        const inputEl = document.getElementById(field);
+        if (errEl) errEl.textContent = Array.isArray(msgs) ? msgs[0] : msgs;
+        if (inputEl) inputEl.classList.add('error');
+      });
+    } else {
+      Toast.error(err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = 'Crear cuenta';
+  }
+});
+</script>
+{% endblock %}

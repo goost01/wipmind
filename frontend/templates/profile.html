@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Perfil — WipMind{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+  <nav class="sidebar">
+    <a href="/dashboard/" class="sidebar-logo"><span>🧠</span> WipMind</a>
+    <a href="/dashboard/" class="nav-link"><span class="icon">📊</span> Dashboard</a>
+    <a href="/tasks/"     class="nav-link"><span class="icon">📝</span> Mis Tareas</a>
+    <a href="/profile/"   class="nav-link active"><span class="icon">👤</span> Perfil</a>
+    <div class="sidebar-spacer"></div>
+    <button class="nav-link" id="btn-logout" style="background:none;border:none;cursor:pointer;width:100%;text-align:left">
+      <span class="icon">🚪</span> Cerrar sesión
+    </button>
+  </nav>
+
+  <header class="topbar">
+    <span class="page-title">Mi Perfil</span>
+  </header>
+
+  <main class="main-content" style="max-width:720px">
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">👤 Datos Personales</div>
+      <form id="personal-form" style="display:flex;flex-direction:column;gap:16px">
+        {% csrf_token %}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label class="form-label">Nombre</label>
+            <input class="form-input" type="text" id="first_name" placeholder="Ana">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Apellido</label>
+            <input class="form-input" type="text" id="last_name" placeholder="López">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input class="form-input" type="email" id="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Carrera</label>
+          <input class="form-input" type="text" id="carrera" placeholder="Ingeniería en Informática">
+        </div>
+        <button type="submit" class="btn btn-primary" style="align-self:flex-start">Guardar datos</button>
+      </form>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">⏱ Configuración Pomodoro</div>
+      <form id="pomodoro-form" style="display:flex;flex-direction:column;gap:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label class="form-label">Minutos de trabajo</label>
+            <input class="form-input" type="number" id="pomodoro_work_minutes" min="5" max="90" value="25">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Descanso corto (min)</label>
+            <input class="form-input" type="number" id="pomodoro_break_minutes" min="1" max="30" value="5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Descanso largo (min)</label>
+            <input class="form-input" type="number" id="pomodoro_long_break_minutes" min="5" max="60" value="15">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ciclos antes del descanso largo</label>
+            <input class="form-input" type="number" id="pomodoro_cycles_before_long_break" min="2" max="8" value="4">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="align-self:flex-start">Guardar Pomodoro</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🚧 Límite WIP</div>
+      <p class="text-sm text-muted" style="margin-bottom:16px">
+        El límite WIP controla cuántas tareas puedes tener simultáneamente "En Proceso".
+        Mantenerlo bajo (2–4) reduce el estrés y mejora el enfoque.
+      </p>
+      <form id="wip-form" style="display:flex;align-items:flex-end;gap:12px">
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Límite WIP actual</label>
+          <input class="form-input" type="number" id="wip_limit" min="1" max="10" value="3">
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-bottom:0">Actualizar</button>
+      </form>
+    </div>
+
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('btn-logout').addEventListener('click', async () => {
+  await WipMindAPI.Auth.logout().catch(() => {});
+  window.location.href = '/login/';
+});
+
+async function loadProfile() {
+  try {
+    const data = await WipMindAPI.Auth.profile();
+    document.getElementById('first_name').value = data.first_name || '';
+    document.getElementById('last_name').value  = data.last_name || '';
+    document.getElementById('email').value      = data.email || '';
+    const p = data.profile;
+    document.getElementById('carrera').value = p.carrera || '';
+    document.getElementById('pomodoro_work_minutes').value          = p.pomodoro_work_minutes;
+    document.getElementById('pomodoro_break_minutes').value         = p.pomodoro_break_minutes;
+    document.getElementById('pomodoro_long_break_minutes').value    = p.pomodoro_long_break_minutes;
+    document.getElementById('pomodoro_cycles_before_long_break').value = p.pomodoro_cycles_before_long_break;
+    document.getElementById('wip_limit').value = p.wip_limit;
+  } catch (_) {
+    window.location.href = '/login/';
+  }
+}
+
+document.getElementById('personal-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await WipMindAPI.Auth.updateProfile({
+      first_name: document.getElementById('first_name').value.trim(),
+      last_name:  document.getElementById('last_name').value.trim(),
+      email:      document.getElementById('email').value.trim(),
+      profile: { carrera: document.getElementById('carrera').value.trim() },
+    });
+    Toast.success('Datos actualizados correctamente.');
+  } catch (err) { Toast.error(err.message); }
+});
+
+document.getElementById('pomodoro-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await WipMindAPI.Auth.updateProfile({ profile: {
+      pomodoro_work_minutes:          parseInt(document.getElementById('pomodoro_work_minutes').value),
+      pomodoro_break_minutes:         parseInt(document.getElementById('pomodoro_break_minutes').value),
+      pomodoro_long_break_minutes:    parseInt(document.getElementById('pomodoro_long_break_minutes').value),
+      pomodoro_cycles_before_long_break: parseInt(document.getElementById('pomodoro_cycles_before_long_break').value),
+    }});
+    Toast.success('Configuración Pomodoro guardada.');
+  } catch (err) { Toast.error(err.message); }
+});
+
+document.getElementById('wip-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await WipMindAPI.Auth.updateProfile({ profile: {
+      wip_limit: parseInt(document.getElementById('wip_limit').value),
+    }});
+    Toast.success('Límite WIP actualizado.');
+  } catch (err) { Toast.error(err.message); }
+});
+
+loadProfile();
+</script>
+{% endblock %}

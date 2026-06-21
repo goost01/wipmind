@@ -1,0 +1,146 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$vOsZFWUPkGpdM0CIl7YwCy$t1bKTQo/LYCWGQM/FvB7OWZQnfZGBs5TYDHV0em4qd0=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@wipmind.cl",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-06-17T18:31:32.163Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$q3O8lgSZUJvlat7X4HpwC8$LwZTIRU0yZkyYfsemaIy/xWN7gT9C1PJ3qRpcgrEIO8=",
+    "last_login": "2026-06-21T21:07:38.298Z",
+    "is_superuser": false,
+    "username": "estudiante",
+    "first_name": "Ana",
+    "last_name": "López",
+    "email": "est@utem.cl",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-06-17T18:31:32.941Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.userprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "carrera": "",
+    "wip_limit": 3,
+    "pomodoro_work_minutes": 25,
+    "pomodoro_break_minutes": 5,
+    "pomodoro_long_break_minutes": 15,
+    "pomodoro_cycles_before_long_break": 4,
+    "created_at": "2026-06-17T18:31:32.768Z",
+    "updated_at": "2026-06-17T18:31:32.866Z"
+  }
+},
+{
+  "model": "users.userprofile",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "estudiante"
+    ],
+    "carrera": "Ingeniería en Informática",
+    "wip_limit": 3,
+    "pomodoro_work_minutes": 25,
+    "pomodoro_break_minutes": 5,
+    "pomodoro_long_break_minutes": 15,
+    "pomodoro_cycles_before_long_break": 4,
+    "created_at": "2026-06-17T18:31:33.493Z",
+    "updated_at": "2026-06-21T21:07:38.379Z"
+  }
+},
+{
+  "model": "tasks.task",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "estudiante"
+    ],
+    "titulo": "Informe de Cálculo I",
+    "descripcion": "",
+    "asignatura": "Cálculo I",
+    "fecha_entrega": "2026-06-19",
+    "prioridad": "ALTA",
+    "dificultad_estimada": 4,
+    "estado": "IN_PROGRESS",
+    "tiempo_estimado_horas": null,
+    "created_at": "2026-06-17T18:31:33.774Z",
+    "updated_at": "2026-06-17T18:31:33.774Z"
+  }
+},
+{
+  "model": "tasks.task",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "estudiante"
+    ],
+    "titulo": "Tarea de Programación",
+    "descripcion": "",
+    "asignatura": "Programación Avanzada",
+    "fecha_entrega": "2026-06-22",
+    "prioridad": "MEDIA",
+    "dificultad_estimada": 3,
+    "estado": "TODO",
+    "tiempo_estimado_horas": null,
+    "created_at": "2026-06-17T18:31:33.857Z",
+    "updated_at": "2026-06-21T21:11:23.305Z"
+  }
+},
+{
+  "model": "tasks.task",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "estudiante"
+    ],
+    "titulo": "Lectura cap. 3 Redes",
+    "descripcion": "",
+    "asignatura": "Redes de Computadores",
+    "fecha_entrega": "2026-06-27",
+    "prioridad": "BAJA",
+    "dificultad_estimada": 2,
+    "estado": "TODO",
+    "tiempo_estimado_horas": null,
+    "created_at": "2026-06-17T18:31:33.949Z",
+    "updated_at": "2026-06-17T18:31:33.949Z"
+  }
+},
+{
+  "model": "tasks.task",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "estudiante"
+    ],
+    "titulo": "Lab. de Física",
+    "descripcion": "",
+    "asignatura": "Física II",
+    "fecha_entrega": "2026-06-18",
+    "prioridad": "ALTA",
+    "dificultad_estimada": 5,
+    "estado": "IN_PROGRESS",
+    "tiempo_estimado_horas": null,
+    "created_at": "2026-06-17T18:31:34.049Z",
+    "updated_at": "2026-06-17T18:31:34.049Z"
+  }
+}
+]
